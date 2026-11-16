@@ -815,6 +815,16 @@ em { font-style: italic; }
   box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.18);
 }
 .form-row textarea { resize: vertical; }
+
+/* Honeypot field: invisible to humans, bait for spam bots */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
 .form-foot {
   text-align: center;
   font-size: 0.85rem;

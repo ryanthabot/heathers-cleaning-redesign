@@ -1,9 +1,10 @@
 /* ============================================================
    Heather's Cleaning Services — interactions
    - Mobile nav toggle
-   - Auto-close mobile nav after clicking a link
    - Active nav-link highlighting on scroll (scrollspy)
-   - Booking form: validate + build a mailto: link
+   - Booking form: POST to /api/inquiry (Cloudflare Pages Function
+     relaying via Resend). Falls back to a mailto: link when the
+     API isn't deployed (e.g., on GitHub Pages previews).
    ============================================================ */
 
 (function () {
@@ -70,56 +71,95 @@
     sections.forEach((s) => observer.observe(s));
   }
 
-  /* ---------- Booking form: build mailto ---------- */
+  /* ---------- Booking form ---------- */
   const form = document.getElementById("booking-form");
+  const INBOX = "heatherbond2024@hotmail.com"; // where inquiries are delivered
+
   if (form) {
-    form.addEventListener("submit", (e) => {
+    const collectFields = () => {
+      const get = (name) => {
+        const el = form.elements[name];
+        return el ? el.value.trim() : "";
+      };
+      return {
+        name: get("name"),
+        email: get("email"),
+        phone: get("phone"),
+        home_size: get("home_size"),
+        service: get("service"),
+        frequency: get("frequency"),
+        when: get("when"),
+        message: get("message"),
+        website: get("website"), // honeypot — humans never see or fill this
+      };
+    };
+
+    const buildMailto = (d) => {
+      const subject = `Cleaning quote request — ${d.name || "new client"}`;
+      const lines = [
+        `Name: ${d.name}`,
+        `Email: ${d.email}`,
+        d.phone ? `Phone: ${d.phone}` : null,
+        d.home_size ? `Home size: ${d.home_size}` : null,
+        d.service ? `Service needed: ${d.service}` : null,
+        d.frequency ? `Frequency: ${d.frequency}` : null,
+        d.when ? `Preferred times: ${d.when}` : null,
+        d.message ? `\nMessage:\n${d.message}` : null,
+        "",
+        "— Sent from the Heather's Cleaning Services website",
+      ].filter(Boolean);
+
+      return `mailto:${INBOX}?subject=${encodeURIComponent(
+        subject
+      )}&body=${encodeURIComponent(lines.join("\n"))}`;
+    };
+
+    const setFoot = (text) => {
+      const foot = form.querySelector(".form-foot");
+      if (foot) foot.textContent = text;
+    };
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Validate required fields
+      // Validate required fields natively first
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
 
-      const get = (name) => {
-        const el = form.elements[name];
-        return el ? el.value.trim() : "";
-      };
+      const data = collectFields();
 
-      const name = get("name");
-      const email = get("email");
-      const phone = get("phone");
-      const home_size = get("home_size");
-      const service = get("service");
-      const frequency = get("frequency");
-      const when = get("when");
-      const message = get("message");
+      // Honeypot tripped — pretend success, send nothing
+      if (data.website) {
+        form.reset();
+        return;
+      }
 
-      const subject = `Cleaning quote request — ${name || "new client"}`;
+      const btn = form.querySelector('button[type="submit"]');
+      const original = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Sending…";
 
-      const body = [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        phone ? `Phone: ${phone}` : null,
-        home_size ? `Home size: ${home_size}` : null,
-        service ? `Service needed: ${service}` : null,
-        frequency ? `Frequency: ${frequency}` : null,
-        when ? `Preferred times: ${when}` : null,
-        message ? `\nMessage:\n${message}` : null,
-        "",
-        "— Sent from the Heather's Cleaning Services website",
-      ]
-        .filter(Boolean)
-        .join("\n");
+      try {
+        const res = await fetch("api/inquiry", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
 
-      // Open the visitor's email client with a prefilled message.
-      // Sent to Heather's inbox — swap to a domain email when the custom domain + Resend are live.
-      const mailto = `mailto:heatherbond2024@hotmail.com?subject=${encodeURIComponent(
-        subject
-      )}&body=${encodeURIComponent(body)}`;
-
-      window.location.href = mailto;
+        setFoot("✅ Thanks! Your inquiry is on its way — we'll reply within 24 hours.");
+        form.reset();
+      } catch (err) {
+        // API not available here (e.g., GitHub Pages preview) —
+        // fall back to opening the visitor's email client.
+        window.location.href = buildMailto(data);
+        setFoot("Opening your email app… or email us directly at " + INBOX);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
     });
   }
 })();
