@@ -23,9 +23,10 @@
   <meta property="og:image:alt" content="Heather's Cleaning Services — come home to spotless. House cleaning across Durham Region." />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,100&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Fonts are hosted on this site (Fraunces and Inter, SIL Open Font Licence — see /fonts),
+       so nothing is fetched from a third party before the page can render. -->
+  <link rel="preload" href="fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Progressive enhancement flag: animations only run when JS is available -->
@@ -114,7 +115,7 @@
         <div class="hero-media">
           <div class="wipe" id="hero-wipe">
             <picture>
-              <source media="(max-width: 879px)" srcset="images/hero-m-640.webp 640w, images/hero-m-960.webp 960w" sizes="100vw" />
+              <source media="(max-width: 879px)" srcset="images/hero-m-640.webp 640w, images/hero-m-750.webp 750w, images/hero-m-960.webp 960w" sizes="100vw" />
               <img class="wipe-base" id="hero-img"
                    src="images/hero-960.webp"
                    srcset="images/hero-640.webp 640w, images/hero-960.webp 960w, images/hero-1280.webp 1280w"
@@ -129,7 +130,7 @@
           <p class="hero-chip hero-chip--price">Flat rates from <strong>$75</strong></p>
 
           <div class="hero-chip hero-chip--heather">
-            <img src="images/heather-avatar.webp" width="112" height="112" alt="" loading="lazy" decoding="async" />
+            <img src="images/heather-avatar.webp" width="160" height="160" alt="" loading="lazy" decoding="async" />
             <p><strong>Heather</strong><span>Owner</span></p>
           </div>
         </div>
@@ -405,7 +406,7 @@
           <img src="images/heather-800.webp" srcset="images/heather-480.webp 480w, images/heather-800.webp 800w"
                sizes="(max-width: 700px) 100vw, 440px" width="800" height="1000" loading="lazy" decoding="async"
                alt="Heather, owner of Heather's Cleaning Services, smiling in a bright kitchen beside a cleaning caddy" />
-          <p class="about-badge"><img src="images/heather-avatar.webp" width="96" height="96" alt="" loading="lazy" decoding="async" /><span><strong>Heather</strong>Owner</span></p>
+          <p class="about-badge"><img src="images/heather-avatar.webp" width="160" height="160" alt="" loading="lazy" decoding="async" /><span><strong>Heather</strong>Owner</span></p>
         </div>
 
         <div class="about-copy rv">
