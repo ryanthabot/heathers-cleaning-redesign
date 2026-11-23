@@ -1,5 +1,5 @@
 // Cloudflare Pages Function: POST /api/inquiry
-// Validates the booking form and relays it as an email via Resend.
+// Validates the quote form and relays it as an email via Resend.
 // Requires the RESEND_API_KEY secret in Pages project settings.
 
 const INBOX = "heatherbond2024@hotmail.com";
@@ -25,26 +25,40 @@ export async function onRequestPost({ request, env }) {
 
   const name = CLEAN(body.name, 80);
   const email = CLEAN(body.email, 120);
-  if (name.length < 2 || !EMAIL_RE.test(email)) {
-    return json({ ok: false, error: "Name and a valid email are required." }, 400);
+  const phone = CLEAN(body.phone, 30);
+
+  if (name.length < 2) {
+    return json({ ok: false, error: "Please add your name." }, 400);
+  }
+  if (email && !EMAIL_RE.test(email)) {
+    return json({ ok: false, error: "That email address doesn't look right." }, 400);
+  }
+  if (!email && !phone) {
+    return json({ ok: false, error: "Add a phone number or an email so we can reach you." }, 400);
   }
 
-  const phone = CLEAN(body.phone, 30);
   const message = CLEAN(body.message, 2000);
   const fields = {
     "Home size": CLEAN(body.home_size, 50),
-    "Service needed": CLEAN(body.service, 50),
-    "Frequency": CLEAN(body.frequency, 50),
-    "Preferred times": CLEAN(body.when, 100),
+    Service: CLEAN(body.service, 50),
   };
 
-  const lines = [`Name: ${name}`, `Email: ${email}`];
+  const lines = [`Name: ${name}`];
   if (phone) lines.push(`Phone: ${phone}`);
+  if (email) lines.push(`Email: ${email}`);
   for (const [label, value] of Object.entries(fields)) {
     if (value) lines.push(`${label}: ${value}`);
   }
   if (message) lines.push("", "Message:", message);
   lines.push("", "— Sent from the contact form at heatherscleaning.ca");
+
+  const emailPayload = {
+    from: FROM,
+    to: [INBOX],
+    subject: `New cleaning inquiry — ${name}`,
+    text: lines.join("\n"),
+  };
+  if (email) emailPayload.reply_to = email; // so Heather can hit "Reply" to answer the client
 
   const resp = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -52,13 +66,7 @@ export async function onRequestPost({ request, env }) {
       Authorization: `Bearer ${env.RESEND_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      from: FROM,
-      to: [INBOX],
-      reply_to: email, // Heather can hit "Reply" to answer the client directly
-      subject: `New cleaning inquiry — ${name}`,
-      text: lines.join("\n"),
-    }),
+    body: JSON.stringify(emailPayload),
   });
 
   if (!resp.ok) {
