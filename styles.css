@@ -44,6 +44,7 @@
   --sun: #F9D45C;
   --line: #E1E8E5;
   --line-strong: #CBD8D4;
+  --input-border: #7C9690; /* form fields only: 3.1:1 on white, the WCAG minimum for a control's boundary */
 
   --font-display: "Fraunces", Georgia, "Times New Roman", serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -1061,7 +1062,7 @@ h1, h2, h3 {
 .form-row textarea {
   width: 100%;
   padding: 0.85rem 1rem;
-  border: 1.5px solid var(--line-strong);
+  border: 1.5px solid var(--input-border);
   border-radius: 14px;
   background-color: var(--porcelain);
   color: var(--teal-900);
