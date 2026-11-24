@@ -9,7 +9,9 @@
 // deliberately not listed here, so a deploy never changes them.
 
 {
-  "name": "heathers-cleaning-redesign",
+  // Must match the Worker's name in the Cloudflare dashboard exactly.
+  // (The repository has a longer name; the Worker does not.)
+  "name": "heathers-cleaning",
   "main": "src/index.js",
   "compatibility_date": "2026-11-01",
   "workers_dev": false,
