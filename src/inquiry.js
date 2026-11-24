@@ -1,6 +1,8 @@
-// Cloudflare Pages Function: POST /api/inquiry
-// Validates the quote form and relays it as an email via Resend.
-// Requires the RESEND_API_KEY secret in Pages project settings.
+// The quote form's endpoint: validate the submission, drop obvious bots,
+// and send it as an email through Resend.
+//
+// Called by src/index.js for POST /api/inquiry.
+// RESEND_API_KEY is a secret stored on the Worker in the Cloudflare dashboard.
 
 const INBOX = "heatherbond2024@hotmail.com";
 const FROM = "Heather's Cleaning Services <hello@heatherscleaning.ca>";
@@ -8,7 +10,11 @@ const FROM = "Heather's Cleaning Services <hello@heatherscleaning.ca>";
 const CLEAN = (s, max) => String(s || "").trim().slice(0, max);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export async function onRequestPost({ request, env }) {
+export async function handleInquiry(request, env) {
+  if (request.method !== "POST") {
+    return json({ ok: false, error: "Method not allowed." }, 405);
+  }
+
   if (!env.RESEND_API_KEY) {
     return json({ ok: false, error: "Server not configured." }, 500);
   }
@@ -20,7 +26,7 @@ export async function onRequestPost({ request, env }) {
     return json({ ok: false, error: "Bad request." }, 400);
   }
 
-  // Honeypot: bots fill hidden fields — silently accept and drop.
+  // Honeypot: bots fill hidden fields. Accept quietly and send nothing.
   if (CLEAN(body.website, 100)) return json({ ok: true });
 
   const name = CLEAN(body.name, 80);
@@ -71,20 +77,20 @@ export async function onRequestPost({ request, env }) {
 
   if (!resp.ok) {
     return json(
-      { ok: false, error: "Could not send right now — please email or call us directly." },
+      { ok: false, error: "Could not send right now. Please email or call us directly." },
       502
     );
   }
   return json({ ok: true });
 }
 
-export async function onRequest() {
-  return json({ ok: false, error: "Method not allowed." }, 405);
-}
-
 function json(obj, status = 200) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+    },
   });
 }

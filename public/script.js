@@ -5,8 +5,8 @@
    - Scroll reveal for sections and the checklist ticks
    - Pricing: home-size picker
    - Mobile action bar (call + quote)
-   - Quote form: POST to api/inquiry (Cloudflare Pages Function →
-     Resend); falls back to a mailto: link when the API isn't there.
+   - Quote form: POST to api/inquiry (a Cloudflare Worker in src/ that
+     relays through Resend); falls back to a mailto: link on any failure.
    ============================================================ */
 
 (function () {

@@ -1,0 +1,20 @@
+// Configuration for deploying this site as a Cloudflare Worker.
+//
+// Cloudflare serves the files in /public directly. Requests that match no file
+// (the quote form's endpoint, unknown addresses) are handled by src/index.js.
+//
+// Deployed by Cloudflare's GitHub integration with `npx wrangler deploy`, or
+// by hand with the same command. The site's address (heatherscleaning.ca) and
+// the RESEND_API_KEY secret are set in the Cloudflare dashboard and are
+// deliberately not listed here, so a deploy never changes them.
+
+{
+  "name": "heathers-cleaning-redesign",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "keep_vars": true,
+  "assets": {
+    "directory": "./public"
+  }
+}

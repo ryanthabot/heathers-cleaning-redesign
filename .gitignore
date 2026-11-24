@@ -1,0 +1,4 @@
+# Created by Wrangler when developing or deploying locally
+.wrangler/
+
+node_modules/
