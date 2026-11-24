@@ -95,12 +95,15 @@ export function estimate(serviceId, homeSizeId, frequencyId) {
     }
 
     if (rates) {
+      // No frequency chosen yet, so the price is a range: always lowest first.
+      const low = Math.min(rates.once, rates.biweekly);
+      const high = Math.max(rates.once, rates.biweekly);
       return {
-        kind: "options",
+        kind: "range",
         highlight: true,
-        headline: `${money(rates.once)} or ${money(rates.biweekly)}`,
-        description: [svc.label, size.long, "one-time, or per clean every two weeks"].join(" · "),
-        sentence: `${money(rates.once)} for a one-time standard clean of a ${size.phrase} home, or ${money(rates.biweekly)} per clean on a bi-weekly schedule.`,
+        headline: `${money(low)} to ${money(high)}`,
+        description: [svc.label, size.long, "depending on how often"].join(" · "),
+        sentence: `${money(low)} to ${money(high)} for a standard clean of a ${size.phrase} home, depending on how often.`,
       };
     }
 
@@ -118,7 +121,7 @@ export function estimate(serviceId, homeSizeId, frequencyId) {
     return {
       kind: "range",
       highlight: true,
-      headline: `${money(MOVE_CLEAN.low)}–${money(MOVE_CLEAN.high)}`,
+      headline: `${money(MOVE_CLEAN.low)} to ${money(MOVE_CLEAN.high)}`,
       description: [svc.label, "flat rate, depending on home size"].join(" · "),
       sentence: `${money(MOVE_CLEAN.low)} to ${money(MOVE_CLEAN.high)} as a flat rate for a move-in / move-out clean, depending on home size.`,
     };
