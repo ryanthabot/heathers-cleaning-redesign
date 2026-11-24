@@ -158,6 +158,24 @@ if (form) {
     return el ? el.value.trim() : "";
   };
 
+  /* A range such as "$125 to $150" is wider than a phone, so the figure's size
+     steps down until it fits on one line. A single price keeps the full size. */
+  const FIT_STEPS = 3;
+  const fitsOnOneLine = () => {
+    const { height } = estimateFigure.getBoundingClientRect();
+    const lineHeight = parseFloat(getComputedStyle(estimateFigure).lineHeight);
+    // Rounded, because the yellow mark adds a hair of padding under the text.
+    return Math.round(height / lineHeight) <= 1;
+  };
+  const fitFigure = () => {
+    delete estimateFigure.dataset.fit;
+    if (!estimateBox.classList.contains("is-set")) return;
+    for (let step = 1; step <= FIT_STEPS && !fitsOnOneLine(); step += 1) {
+      estimateFigure.dataset.fit = String(step);
+    }
+  };
+  window.addEventListener("resize", fitFigure);
+
   /* The estimate: reworked out whenever a choice changes. */
   const updateEstimate = () => {
     const isStandardClean = serviceSelect.value === "standard";
@@ -175,6 +193,7 @@ if (form) {
     estimateFigure.classList.toggle("is-highlighted", est.highlight);
     estimateFigure.textContent = est.headline;
     estimateDetail.textContent = est.description;
+    fitFigure();
   };
 
   [homeSizeSelect, serviceSelect, frequencySelect].forEach((el) => {

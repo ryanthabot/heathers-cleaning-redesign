@@ -1125,6 +1125,12 @@ h1, h2, h3 {
   background: var(--sun);
 }
 
+/* A range such as "$125 to $150" is wider than a phone. script.js measures the
+   figure and steps its size down until it fits on one line. */
+.estimate.is-set .estimate-figure[data-fit="1"] { font-size: 2.15rem; }
+.estimate.is-set .estimate-figure[data-fit="2"] { font-size: 1.85rem; }
+.estimate.is-set .estimate-figure[data-fit="3"] { font-size: 1.55rem; }
+
 /* Honeypot: invisible to people, bait for spam bots */
 .hp-field {
   position: absolute;
