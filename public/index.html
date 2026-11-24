@@ -295,11 +295,13 @@
           <div class="price-panel rv">
             <h3 class="price-panel-title">Standard clean</h3>
 
+            <!-- The figures come from pricing.js, so the picker, the quote form and
+                 the emails can never disagree. The numbers below only show without JavaScript. -->
             <div class="size-picker" id="size-picker" role="group" aria-label="Choose your home size">
-              <button type="button" class="size-btn is-active" data-once="100" data-biweekly="75" aria-pressed="true">Studio / 1BR</button>
-              <button type="button" class="size-btn" data-once="150" data-biweekly="125" aria-pressed="false">2BR</button>
-              <button type="button" class="size-btn" data-once="175" data-biweekly="150" aria-pressed="false">3BR</button>
-              <button type="button" class="size-btn" data-once="200" data-biweekly="175" aria-pressed="false">4BR+</button>
+              <button type="button" class="size-btn is-active" data-size="studio" aria-pressed="true">Studio / 1BR</button>
+              <button type="button" class="size-btn" data-size="2br" aria-pressed="false">2BR</button>
+              <button type="button" class="size-btn" data-size="3br" aria-pressed="false">3BR</button>
+              <button type="button" class="size-btn" data-size="4br" aria-pressed="false">4BR+</button>
             </div>
 
             <div class="price-display" aria-live="polite">
@@ -317,7 +319,8 @@
               <li>Three bedrooms: $175 one-time, $150 per clean bi-weekly</li>
               <li>Four bedrooms or more: $200 one-time, $175 per clean bi-weekly</li>
             </ul>
-            <a href="#contact" class="btn btn-primary btn-block">Get a free quote</a>
+            <!-- Carries the chosen home size down into the quote form -->
+            <a href="#contact" class="btn btn-primary btn-block" data-quote-service="standard" data-quote-size="picker">Get a free quote</a>
           </div>
 
           <div class="quote-cards">
@@ -327,7 +330,7 @@
                 <p class="quote-big">Free quote</p>
               </div>
               <p class="quote-desc">Deep cleans are priced for your home. Tell us about it and get a free quote.</p>
-              <a href="#contact" class="link-arrow">Ask for a quote<svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
+              <a href="#contact" class="link-arrow" data-quote-service="deep">Ask for a quote<svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
             </article>
 
             <article class="quote-card rv">
@@ -336,7 +339,7 @@
                 <p class="quote-big">$125–$175</p>
               </div>
               <p class="quote-desc">A flat rate depending on home size, confirmed with a free quote before we start.</p>
-              <a href="#contact" class="link-arrow">Ask for a quote<svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
+              <a href="#contact" class="link-arrow" data-quote-service="move">Ask for a quote<svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
             </article>
           </div>
         </div>
@@ -464,36 +467,46 @@
 
           <div class="form-cols">
             <div class="form-row">
-              <label for="phone">Phone</label>
+              <label for="phone">Phone <span class="opt">(optional)</span></label>
               <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" />
             </div>
             <div class="form-row">
               <label for="email">Email</label>
-              <input type="email" id="email" name="email" autocomplete="email" inputmode="email" />
+              <input type="email" id="email" name="email" required autocomplete="email" inputmode="email" />
             </div>
           </div>
 
           <div class="form-cols">
             <div class="form-row">
               <label for="home_size">Home size</label>
-              <select id="home_size" name="home_size">
+              <select id="home_size" name="home_size" required>
                 <option value="">Choose…</option>
-                <option>Studio / 1BR</option>
-                <option>2BR</option>
-                <option>3BR</option>
-                <option>4BR+</option>
+                <option value="studio">Studio / 1 bedroom</option>
+                <option value="2br">2 bedrooms</option>
+                <option value="3br">3 bedrooms</option>
+                <option value="4br">4 bedrooms or more</option>
               </select>
             </div>
             <div class="form-row">
               <label for="service">Service</label>
-              <select id="service" name="service">
+              <select id="service" name="service" required>
                 <option value="">Choose…</option>
-                <option>Standard clean</option>
-                <option>Deep clean</option>
-                <option>Move-in / move-out</option>
-                <option>Not sure yet</option>
+                <option value="standard">Standard clean</option>
+                <option value="deep">Deep clean</option>
+                <option value="move">Move-in / move-out</option>
+                <option value="unsure">Not sure yet</option>
               </select>
             </div>
+          </div>
+
+          <!-- Shown only for a standard clean, whose price depends on how often it is done -->
+          <div class="form-row" id="frequency-row" hidden>
+            <label for="frequency">How often? <span class="opt">(optional)</span></label>
+            <select id="frequency" name="frequency">
+              <option value="">Choose…</option>
+              <option value="once">One-time</option>
+              <option value="biweekly">Every two weeks</option>
+            </select>
           </div>
 
           <div class="form-row">
@@ -501,7 +514,13 @@
             <textarea id="message" name="message" rows="2" placeholder="Pets, trouble spots, preferred days…"></textarea>
           </div>
 
-          <p class="form-error" id="form-error" role="alert" hidden>Add a phone number or an email so we can reach you.</p>
+          <!-- The estimated price for the choices above, worked out from pricing.js -->
+          <div class="estimate" id="estimate" aria-live="polite">
+            <p class="estimate-label">Estimated price</p>
+            <p class="estimate-figure" id="estimate-figure">Choose your home size and service</p>
+            <p class="estimate-detail" id="estimate-detail">Your price appears here before you send.</p>
+            <p class="estimate-note">Heather confirms your final price when she replies.</p>
+          </div>
 
           <!-- Honeypot: hidden from people, bait for spam bots -->
           <input type="text" id="website" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -547,6 +566,6 @@
     <a href="#contact" class="btn btn-primary">Get a free quote</a>
   </div>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -1087,15 +1087,42 @@ h1, h2, h3 {
   background-color: #fff;
   box-shadow: 0 0 0 4px rgba(46, 196, 182, 0.22);
 }
-.form-row input.is-invalid { border-color: #C23B3B; }
-.form-error {
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  background: #FDECEC;
-  color: #7A1D1D;
-  font-size: 0.92rem;
-  font-weight: 500;
+
+/* The estimated price in the quote form. The figure carries the same yellow
+   mark as the headline, so it reads as the thing to notice. */
+.estimate {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem 1.4rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--porcelain);
+  text-align: center;
+}
+.estimate-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.estimate-figure {
+  display: inline-block;
+  margin-top: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--teal-900);
+}
+.estimate-detail { margin-top: 0.35rem; font-size: 0.95rem; line-height: 1.45; color: var(--teal-700); }
+.estimate-note { margin-top: 0.5rem; font-size: 0.82rem; line-height: 1.4; color: var(--muted); }
+
+.estimate.is-set { background: var(--mint); border-color: transparent; }
+.estimate.is-set .estimate-figure { font-size: 2.6rem; }
+.estimate.is-set .estimate-figure.is-highlighted {
+  padding: 0 0.16em 0.03em;
+  border-radius: 0.14em;
+  background: var(--sun);
 }
 
 /* Honeypot: invisible to people, bait for spam bots */
