@@ -1049,6 +1049,9 @@ h1, h2, h3 {
 .quote-form {
   padding: clamp(1.4rem, 3.5vw, 2.5rem);
   background: #fff;
+  /* The card sits on the dark band, whose text is white. Without a colour here,
+     anything added to the card inherits white and vanishes on the white card. */
+  color: var(--teal-700);
   border-radius: 28px;
   box-shadow: var(--shadow-md);
 }
