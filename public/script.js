@@ -200,7 +200,8 @@ if (form) {
     if (foot) foot.textContent = text;
   };
 
-  const showReceived = (email) => {
+  // `copySent` is false when the server could not email the visitor their copy.
+  const showReceived = (email, copySent) => {
     const wrap = document.createElement("div");
     wrap.className = "form-success";
     wrap.setAttribute("role", "status");
@@ -214,9 +215,13 @@ if (form) {
     title.textContent = "Request received";
 
     const copy = document.createElement("p");
-    copy.append("Thanks. We've emailed a copy of your request, with your estimated price, to ");
-    copy.append(email);            // typed by the visitor, so added as text, never as markup
-    copy.append(". We'll be in touch to confirm your price and a time that works.");
+    if (copySent) {
+      copy.append("Thanks. We've emailed a copy of your request, with your estimated price, to ");
+      copy.append(email);          // typed by the visitor, so added as text, never as markup
+      copy.append(". We'll be in touch to confirm your price and a time that works.");
+    } else {
+      copy.append("Thanks. We've received your request, and we'll be in touch to confirm your price and a time that works.");
+    }
 
     const call = document.createElement("p");
     call.append("Prefer to talk? ");
@@ -266,7 +271,7 @@ if (form) {
 
     // Honeypot tripped: pretend it worked, send nothing
     if (data.website) {
-      showReceived(data.email);
+      showReceived(data.email, true);
       return;
     }
 
@@ -288,7 +293,7 @@ if (form) {
       if (!res.ok) throw new Error("HTTP " + res.status);
       const json = await res.json();
       if (!json || json.ok === false) throw new Error("rejected");
-      showReceived(data.email);
+      showReceived(data.email, json.copySent !== false);
     } catch (err) {
       mailtoFallback(data);
     } finally {

@@ -70,10 +70,12 @@ export async function handleInquiry(request, env) {
     return json({ ok: false, error: "Could not send right now. Please email or call us directly." }, 502);
   }
 
-  // The confirmation is a courtesy: a failure here must not look like the request failed.
-  await sendEmail(env, email, customerEmail(details), { replyTo: INBOX });
+  // The confirmation is a courtesy: a failure here must not look like the request
+  // failed. The page is told whether it went, so it never promises a copy that
+  // was not sent.
+  const copySent = await sendEmail(env, email, customerEmail(details), { replyTo: INBOX });
 
-  return json({ ok: true });
+  return json({ ok: true, copySent });
 }
 
 async function sendEmail(env, to, message, { replyTo }) {
