@@ -175,6 +175,12 @@ if (form) {
     }
   };
   window.addEventListener("resize", fitFigure);
+  // The headline font is wider than the stand-in the browser uses first, so the
+  // figure can start on one line and wrap when the real font arrives.
+  if (document.fonts) {
+    document.fonts.ready.then(fitFigure);
+    document.fonts.addEventListener("loadingdone", fitFigure);
+  }
 
   /* The estimate: reworked out whenever a choice changes. */
   const updateEstimate = () => {
