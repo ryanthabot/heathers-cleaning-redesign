@@ -25,7 +25,9 @@
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="pages.css" />
-  <!-- Cookie choices. Deferred, so it runs once the page has been read. -->
+  <!-- Cookie choices and the statistics script. Deferred, so it runs once the page
+       has been read. It also removes any statistics script the host may have added
+       to the page, before that can run. -->
   <script src="consent.js" defer></script>
 
   <!-- Progressive enhancement flag: animations only run when JS is available -->
@@ -204,10 +206,6 @@
     </div>
   </footer>
 
-
-  <!-- Statistics. This tag holds the site's public token and does nothing by itself.
-       consent.js loads the real statistics script only after the visitor chooses Accept. -->
-<script type="text/plain" class="consent-hold" data-cf-beacon='{"token":"7428e594f9564a3b92b7845753d4ab2c"}'></script>
 
   <script type="module" src="script.js"></script>
 </body>

@@ -1,0 +1,15 @@
+# Headers for every file the host serves from this folder: pages, styles,
+# scripts, images and fonts.
+#
+# "no-transform" asks Cloudflare to deliver each file as it is written. Without
+# it, Cloudflare's Web Analytics adds a statistics script of its own to every
+# page, for every visitor, before anyone has said yes. That would make the cookie
+# banner untrue. The statistics script is loaded by consent.js instead, and only
+# after the visitor chooses Accept.
+#
+# The rest of the line is the caching Cloudflare gives files by default. It is
+# repeated here because a header in this file takes the place of the default.
+#
+# See https://developers.cloudflare.com/web-analytics/get-started/
+/*
+  Cache-Control: public, max-age=0, must-revalidate, no-transform

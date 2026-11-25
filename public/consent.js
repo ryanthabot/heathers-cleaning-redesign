@@ -2,25 +2,39 @@
    Cookie choices
    The site sets no cookies. One optional thing exists: a statistics
    script from Cloudflare. It is loaded only after the visitor chooses
-   Accept, and it is never loaded when the browser sends a privacy
-   signal that says no.
+   Accept. A browser privacy signal counts as Reject: the banner is
+   then not shown.
 
    The choice is kept in this browser's local storage, on this device,
    for twelve months. It is not a cookie and it never leaves the device.
-   ============================================================ */(function () {
+   ============================================================ */
+(function () {
   "use strict";
 
+  // The site's public statistics token, from the Cloudflare dashboard. It is kept
+  // here and not in the page, so that nothing in the page can start the
+  // statistics script by itself.
+  var TOKEN = "7428e594f9564a3b92b7845753d4ab2c";
   var KEY = "hcs-consent";
   var MONTHS = 12;
   var MS_PER_MONTH = 30.44 * 24 * 60 * 60 * 1000;
   var BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js";
+  // A tag that would start the statistics script, however its settings are passed.
+  var LIVE_TAG = 'script:not([type="text/plain"])[data-cf-beacon], script[src*="beacon"][src*="?token="]';
 
   var root = document.documentElement;
   var banner = document.getElementById("consent");
-  // The inert tag in the page that holds the site's public statistics token.
-  var hold = document.querySelector('script[type="text/plain"][data-cf-beacon]');
   var settingsButtons = document.querySelectorAll("[data-consent-settings]");
-  if (!banner || !hold) return;
+  if (!banner) return;
+
+  // The pages ask the host not to add anything to them (see public/_headers).
+  // That is what keeps the host's own statistics script out. This is the second
+  // line of defence, for a page with such a tag anyway. The host writes its tag
+  // at the end of the page, so it would run after this file: taken out here, it
+  // never runs. Statistics then start from this file only.
+  Array.prototype.forEach.call(document.querySelectorAll(LIVE_TAG), function (tag) {
+    tag.remove();
+  });
 
   var loaded = false;
 
@@ -55,15 +69,8 @@
   function loadStatistics() {
     if (loaded) return;
     loaded = true;
-    var config;
-    try {
-      config = JSON.parse(hold.getAttribute("data-cf-beacon") || "null");
-    } catch (err) {
-      config = null;
-    }
-    if (!config || !config.token) return;
     var script = document.createElement("script");
-    script.setAttribute("data-cf-beacon", JSON.stringify({ token: config.token }));
+    script.setAttribute("data-cf-beacon", JSON.stringify({ token: TOKEN }));
     script.src = BEACON_SRC;
     document.body.appendChild(script);
   }
