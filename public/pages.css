@@ -1,0 +1,105 @@
+/* ============================================================
+   LEGAL PAGES
+   Privacy policy, terms of use, service agreement, cancellation
+   policy, cookie policy, SMS messaging terms and accessibility.
+
+   A quiet, typographic page: the title, a contents list, then the
+   text. It is loaded only by those pages, on top of styles.css.
+   ============================================================ */
+
+.legal { padding-block: clamp(2rem, 5vw, 3.5rem) clamp(3.25rem, 8vw, 6.5rem); }
+/* Three pieces, placed by name. On a phone the title comes first, then the
+   contents list, then the text. On a wide screen the list moves to the side.
+   The middle column is "minmax(0, 1fr)": without that, a grid column grows to
+   the widest unbreakable thing in it, which on the narrowest phones was an
+   email address plus the padding of the box around it. */
+.legal-layout { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "toc" "body"; gap: 1.5rem; }
+.legal-head { grid-area: head; }
+.legal-toc { grid-area: toc; }
+.legal-body { grid-area: body; }
+.legal-head, .legal-body { max-width: 43rem; }
+
+/* ---------- Contents list ---------- */
+.legal-toc {
+  padding: 1rem 1.15rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.legal-toc-title {
+  margin: 0 0 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.legal-toc ol { display: grid; gap: 0.1rem; padding: 0; list-style: none; counter-reset: item; }
+.legal-toc li { counter-increment: item; }
+.legal-toc a {
+  display: flex;
+  gap: 0.6rem;
+  padding-block: 0.3rem;   /* with the line height, each link is over 24px tall to tap */
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--teal-900);
+}
+.legal-toc a::before {
+  content: counter(item) ".";
+  flex: none;
+  min-width: 1.4rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+/* ---------- The text ---------- */
+.legal-head .eyebrow { margin-bottom: 0.9rem; }
+.legal-head h1 { font-size: clamp(2.25rem, 1.3rem + 3.6vw, 3.75rem); }
+.legal-meta { margin-top: 0.9rem; font-size: 0.9rem; color: var(--muted); }
+.legal-lead { margin-top: 1.1rem; font-size: 1.125rem; line-height: 1.55; color: var(--teal-700); }
+
+.legal-body section {
+  margin-top: 2.25rem;
+  padding-top: 1.9rem;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 5.5rem;   /* leaves room for the sticky header when a link jumps here */
+}
+.legal-body h2 {
+  margin-bottom: 0.7rem;
+  font-size: clamp(1.4rem, 1.15rem + 0.8vw, 1.75rem);
+  line-height: 1.15;
+}
+.legal-body h3 { margin-top: 1.4rem; margin-bottom: 0.4rem; font-size: 1.1rem; line-height: 1.25; }
+.legal-body p, .legal-body li { line-height: 1.65; color: var(--teal-700); }
+.legal-body p + p, .legal-body ul + p, .legal-body ol + p, .legal-body h3 + ul { margin-top: 0.85rem; }
+.legal-body ul, .legal-body ol { display: grid; gap: 0.4rem; margin-top: 0.7rem; padding-left: 1.3rem; }
+.legal-body ul { list-style: disc; }
+.legal-body ol { list-style: decimal; }
+.legal-body li::marker { color: var(--muted); }
+.legal-body a { color: var(--aqua-text); text-decoration: underline; text-underline-offset: 3px; }
+/* A long email address may break, but only where it would otherwise not fit. */
+.legal-body a, .legal-contact a { overflow-wrap: anywhere; }
+.legal-body strong { font-weight: 600; color: var(--teal-900); }
+
+.legal-contact { margin-top: 2.5rem; padding: 1.2rem 1.35rem; background: var(--mint); border-radius: 18px; }
+.legal-contact p { color: var(--teal-900); }
+
+/* On a phone that is wide enough, the list runs in two columns so that it
+   does not push the text far down the page. */
+@media (min-width: 380px) and (max-width: 860px) {
+  .legal-toc ol { display: block; column-count: 2; column-gap: 1.25rem; }
+  .legal-toc li { break-inside: avoid; }
+  .legal-toc a { padding-block: 0.2rem; }
+}
+
+@media (min-width: 861px) {
+  .legal-layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+    grid-template-areas: "toc head" "toc body";
+    column-gap: clamp(2.5rem, 6vw, 6rem);
+    row-gap: 0;
+    align-items: start;
+  }
+  /* Beside the text, and within reach while the page scrolls */
+  .legal-toc { position: sticky; top: 5.5rem; }
+}

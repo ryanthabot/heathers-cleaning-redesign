@@ -28,6 +28,8 @@
   <link rel="preload" href="fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
+  <!-- Cookie choices. Deferred, so it runs once the page has been read. -->
+  <script src="consent.js" defer></script>
 
   <!-- Progressive enhancement flag: animations only run when JS is available -->
   <script>document.documentElement.classList.add("js");</script>
@@ -56,6 +58,22 @@
 <body>
 
   <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ COOKIE CHOICES ============
+       Shown by consent.js only when a choice is needed. Without JavaScript it stays hidden.
+       It is a labelled region, not a dialog: it never takes focus on its own.
+       It sits here, near the top of the page, so a keyboard user reaches it after
+       one Tab and does not have to cross the whole site. It is drawn at the bottom. -->
+  <div class="consent" id="consent" role="region" aria-labelledby="consent-title" aria-describedby="consent-text" hidden>
+    <div class="consent-inner">
+      <p class="consent-title" id="consent-title">Cookies and statistics</p>
+      <p class="consent-text" id="consent-text">This website uses no cookies. With your permission, a statistics script from Cloudflare shows us how the site is performing. It sets no cookies and does not identify you. <a href="/cookie-policy">Read the cookie policy</a></p>
+      <div class="consent-actions">
+        <button type="button" class="btn btn-primary" data-consent="accept">Accept</button>
+        <button type="button" class="btn btn-outline" data-consent="reject">Reject</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Icon set: Lucide (ISC licence) -->
   <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
@@ -527,6 +545,7 @@
 
           <button type="submit" class="btn btn-primary btn-lg btn-block">Request my free quote</button>
           <p class="form-foot">First clean 15% off.</p>
+          <p class="form-privacy">We use your details to answer you and to arrange your cleaning.<br /><a href="/privacy-policy">Read the privacy policy</a>.</p>
         </form>
 
       </div>
@@ -556,6 +575,20 @@
         <a href="mailto:heatherbond2024@hotmail.com">heatherbond2024@hotmail.com</a>
         <p>© 2026 Heather's Cleaning Services<br />Durham Region, Ontario</p>
       </div>
+
+      <div class="footer-legal">
+        <p class="footer-legal-title" id="footer-legal-title">Legal</p>
+        <nav class="footer-legal-nav" aria-labelledby="footer-legal-title">
+          <a href="/privacy-policy">Privacy policy</a>
+          <a href="/terms-of-use">Terms of use</a>
+          <a href="/service-agreement">Service agreement</a>
+          <a href="/cancellation-policy">Cancellation policy</a>
+          <a href="/cookie-policy">Cookie policy</a>
+          <a href="/sms-messaging-terms">SMS messaging terms</a>
+          <a href="/accessibility">Accessibility</a>
+          <button type="button" class="footer-cookie-settings" data-consent-settings>Cookie settings</button>
+        </nav>
+      </div>
     </div>
   </footer>
 
@@ -565,6 +598,10 @@
     <a href="tel:+19059041566" class="btn btn-outline"><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg>Call</a>
     <a href="#contact" class="btn btn-primary">Get a free quote</a>
   </div>
+
+  <!-- Statistics. This tag holds the site's public token and does nothing by itself.
+       consent.js loads the real statistics script only after the visitor chooses Accept. -->
+  <script type="text/plain" class="consent-hold" data-cf-beacon='{"token":"7428e594f9564a3b92b7845753d4ab2c"}'></script>
 
   <script type="module" src="script.js"></script>
 </body>
