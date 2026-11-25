@@ -19,6 +19,13 @@
   var MONTHS = 12;
   var MS_PER_MONTH = 30.44 * 24 * 60 * 60 * 1000;
   var BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js";
+  // The settings the host itself gave the statistics script while it was adding
+  // that script to these pages. "version" matters: with it, the script reports to
+  // this site's own address (/cdn-cgi/rum), which the host accepts. Without it,
+  // the script reports to cloudflareinsights.com, which refuses reports from a
+  // site that Cloudflare itself serves. (That address is for sites hosted
+  // elsewhere.) The other two keep the measuring as the host had it.
+  var BEACON_SETTINGS = { version: "2024.11.0", r: 1, spa: 2 };
   // A tag that would start the statistics script, however its settings are passed.
   var LIVE_TAG = 'script:not([type="text/plain"])[data-cf-beacon], script[src*="beacon"][src*="?token="]';
 
@@ -70,7 +77,7 @@
     if (loaded) return;
     loaded = true;
     var script = document.createElement("script");
-    script.setAttribute("data-cf-beacon", JSON.stringify({ token: TOKEN }));
+    script.setAttribute("data-cf-beacon", JSON.stringify(Object.assign({ token: TOKEN }, BEACON_SETTINGS)));
     script.src = BEACON_SRC;
     document.body.appendChild(script);
   }
